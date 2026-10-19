@@ -1,0 +1,87 @@
+ortho_consistent:
+  title: Orthopaedic ORIF - everything consistent
+  package_code: OR-FRACT-ORIF
+  modality: xray
+  body_part: long_bone
+  billed_laterality: left
+  images:
+  - femur_comminuted.png
+  report: report_femur_comminuted.txt
+  admission_date: '2026-09-01'
+  procedure_date: '2026-09-02'
+  discharge_date: '2026-09-07'
+  imaging_date: '2026-09-01'
+ortho_exaggerated:
+  title: ORIF billed on a hairline fracture (severity exaggerated)
+  package_code: OR-FRACT-ORIF
+  modality: xray
+  body_part: long_bone
+  billed_laterality: left
+  images:
+  - femur_hairline.png
+  report: report_femur_exaggerated.txt
+  admission_date: '2026-09-01'
+  procedure_date: '2026-09-02'
+  discharge_date: '2026-09-06'
+  imaging_date: '2026-09-01'
+ortho_no_fracture:
+  title: Fracture claimed, image intact (unsupported)
+  package_code: OR-FRACT-ORIF
+  modality: xray
+  body_part: long_bone
+  billed_laterality: left
+  images:
+  - femur_normal.png
+  report: report_femur_exaggerated.txt
+  admission_date: '2026-09-01'
+  procedure_date: '2026-09-02'
+  discharge_date: '2026-09-06'
+  imaging_date: '2026-09-01'
+chest_contradiction:
+  title: Report says clear lungs, image shows effusion
+  package_code: PU-PNEUMONIA-MED
+  modality: xray
+  body_part: chest
+  images:
+  - chest_effusion_patient_right.png
+  report: report_chest_normal_but_effusion.txt
+  admission_date: '2026-09-10'
+  discharge_date: '2026-09-14'
+  imaging_date: '2026-09-10'
+chest_wrong_side:
+  title: Left effusion drained - image shows RIGHT effusion
+  package_code: PU-EFFUSION-DRAIN
+  modality: xray
+  body_part: chest
+  billed_laterality: left
+  images:
+  - chest_effusion_patient_right.png
+  report: report_effusion_wrong_side.txt
+  admission_date: '2026-09-10'
+  procedure_date: '2026-09-11'
+  discharge_date: '2026-09-16'
+  imaging_date: '2026-09-10'
+pneumonia_scanned_report:
+  title: Pneumonia, scanned (photographed) report - consistent
+  package_code: PU-PNEUMONIA-MED
+  modality: xray
+  body_part: chest
+  images:
+  - chest_pneumonia_patient_left.png
+  report: report_pneumonia_ok_scanned.png
+  admission_date: '2026-09-10'
+  discharge_date: '2026-09-15'
+  imaging_date: '2026-09-10'
+tkr_insufficient_conservative:
+  title: TKR without the required conservative-management period
+  package_code: OR-KNEE-TKR
+  modality: xray
+  body_part: knee
+  billed_laterality: right
+  images:
+  - femur_normal.png
+  report: report_knee_oa.txt
+  admission_date: '2026-09-01'
+  procedure_date: '2026-09-02'
+  discharge_date: '2026-09-08'
+  imaging_date: '2026-09-01'

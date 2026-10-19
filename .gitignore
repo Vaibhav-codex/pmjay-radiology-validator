@@ -1,0 +1,17 @@
+cd pmjay-radiology-validator
+cat > .gitignore << 'EOF'
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+.DS_Store
+
+# runtime data (uploads may contain patient records)
+uploads/*
+outputs/*
+data/*
+!uploads/.gitkeep
+!outputs/.gitkeep
+!data/.gitkeep
+EOF

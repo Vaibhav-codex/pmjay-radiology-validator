@@ -1,0 +1,42 @@
+# Lexicon for the rule-based clinical extractor. Extend freely; swap for a
+# transformer NER (ClinicalBERT/BioLinkBERT) via claimlens/nlp/transformer_ner.py
+findings:
+  fracture: [fracture, fractured, fractures, "fracture line", "cortical break", "cortical breach", "# of", "fx"]
+  infiltrate: [infiltrate, infiltrates, infiltration, consolidation, opacity, opacities, pneumonia, pneumonitis, "airspace disease", "lobar pneumonia", "bronchopneumonia"]
+  effusion: ["pleural effusion", effusion, "costophrenic angle blunting", "blunting of costophrenic", "blunted costophrenic", hydrothorax]
+  mass: [mass, tumor, tumour, neoplasm, malignancy, carcinoma, "space occupying lesion", sol, nodule, growth, lump]
+  fluid_collection: ["fluid collection", ascites, "free fluid", abscess, hydronephrosis, "anechoic collection", cyst]
+  osteoarthritis: [osteoarthritis, "joint space narrowing", "degenerative changes", osteophytes, "oa knee", "kellgren"]
+  calculus: [calculus, calculi, stone, stones, cholelithiasis, gallstones, "gall stones"]
+
+severity:
+  severe: [severe, "grade 3", "grade iii", "grade 4", "grade iv", complex, comminuted, massive, extensive, gross, displaced, "high grade", marked, large, complete, "multiple fragments", unstable]
+  moderate: [moderate, "grade 2", "grade ii", partial, significant, segmental, intermediate]
+  mild: [mild, minimal, small, hairline, undisplaced, "non-displaced", nondisplaced, "grade 1", "grade i", subtle, trace, minor, stable]
+
+negation: ["no", not, without, absent, negative, "no evidence of", "free of", "rule out", "ruled out", "r/o", denies, "not seen", "not visualized", "not identified", unremarkable, nil]
+
+laterality:
+  left: [left, lt]
+  right: [right, rt]
+  bilateral: [bilateral, both, bilaterally]
+
+sites:
+  chest: [chest, lung, lungs, pleural, thorax, thoracic, hemithorax, costophrenic, lobe, hilar]
+  knee: [knee, patella, tibiofemoral, patellofemoral]
+  long_bone: [femur, femoral, tibia, fibula, humerus, radius, ulna, "shaft", "long bone", diaphysis, diaphyseal, forearm, leg, thigh]
+  hand: [hand, wrist, finger, metacarpal, phalanx, phalanges, scaphoid]
+  abdomen: [abdomen, abdominal, gallbladder, liver, kidney, renal, pelvis, pancreas, spleen]
+  other: [brain, skull, spine, vertebra, breast, thyroid]
+
+procedures:
+  orif: ["open reduction", orif, "internal fixation", "plating", "intramedullary nailing", "nailing", "k-wire", "k wire", "dynamic hip screw", "dcp"]
+  cast: [cast, plaster, "pop application", splint, "closed reduction"]
+  tkr: ["total knee replacement", tkr, "knee arthroplasty", arthroplasty, "total knee arthroplasty"]
+  icd_drain: ["chest tube", "intercostal drainage", "intercostal drain", "icd insertion", thoracentesis, "pleural tap", "pleural drainage"]
+  medical_pneumonia: ["iv antibiotics", "intravenous antibiotics", "oxygen therapy", "nebulization", "antibiotic therapy", "medical management"]
+  tumour_excision: ["excision", "resection", "wide local excision", "mastectomy", "lumpectomy", "tumor removal", "tumour removal", "debulking"]
+  biopsy: [biopsy, fnac, histopathology, histology, "core biopsy"]
+  cholecystectomy: [cholecystectomy, "lap chole", "gallbladder removal"]
+
+conservative_cues: [conservative, physiotherapy, analgesics, nsaid, nsaids, brace, "medical management", "non-operative", "non operative", "trial of", "intra-articular"]

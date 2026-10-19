@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ r.claim.claim_id }}{% endblock %}
+{% block body %}
+{% set rec = r.recommendation %}
+<section class="card verdict">
+  <div>
+    <h1>{{ r.claim.claim_id }}</h1>
+    <p class="muted">{{ r.package.name or r.package.code }}{% if r.package.specialty %} · {{ r.package.specialty }}{% endif %} · stage: {{ r.claim.stage_of_care.replace('_',' ') }}</p>
+    <p style="margin-top:.8rem"><span class="pill {{ rec.band }}">{{ rec.action }}</span></p>
+    <p>{{ rec.summary }}</p>
+    <p class="meta">Image–report agreement {{ r.alignment_score|pct }} · {{ r.flags|length }} flag{{ '' if r.flags|length==1 else 's' }} · {{ r.stg_checks|selectattr('status','equalto','fail')|list|length }} STG check(s) failed</p>
+  </div>
+  <div aria-label="Risk score {{ r.risk_score }} out of 100">
+    <div class="scale"><b style="left:{{ r.risk_score }}%">{{ r.risk_score }}</b><i style="left:{{ r.risk_score }}%"></i></div>
+    <div class="ticks"><span>consistent</span><span>review</span><span>escalate</span></div>
+  </div>
+</section>
+
+<div class="layout">
+  <section class="viewer" aria-label="Image viewer">
+    <div class="tabs" role="group" aria-label="Image view">
+      <button type="button" data-view="explain" aria-pressed="true">Heatmap + boxes</button>
+      <button type="button" data-view="enhanced" aria-pressed="false">Enhanced</button>
+      <button type="button" data-view="original" aria-pressed="false">Original</button>
+    </div>
+    <div class="stage"><img id="stage-img" alt="Radiograph with model-highlighted regions"></div>
+    <div class="thumbs">
+      {% for im in r.images %}<button type="button" data-idx="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.first else 'false' }}" title="{{ im.filename }}"><img src="{{ url_for('outputs', filename=im.artifacts.original) }}" alt="{{ im.filename }}"></button>{% endfor %}
+    </div>
+    <div class="cap" id="cap"></div>
+  </section>
+
+  <div>
+    <section class="card">
+      <h2>Discrepancy flags</h2>
+      {% if not r.flags %}<p class="muted">No discrepancies between the images, the report and the claim.</p>{% endif %}
+      {% for f in r.flags %}
+      <div class="flag {{ f.severity }}">
+        <h3><span class="pill {{ f.severity }}">{{ f.severity }}</span>{{ f.title }}</h3>
+        <p>{{ f.rationale }}</p>
+      </div>{% endfor %}
+    </section>
+
+    <section class="card">
+      <h2>Treatment guideline &amp; package checks</h2>
+      <table class="rule"><tbody>
+        {% for c in r.stg_checks %}<tr><td>{{ c.rule_id }}</td><td><b>{{ c.title }}</b><br><span class="muted">{{ c.detail }}</span></td><td><span class="pill {{ c.status }}">{{ c.status }}</span></td></tr>{% endfor %}
+      </tbody></table>
+    </section>
+
+    <section class="card">
+      <h2>What the images show</h2>
+      {% if r.image_findings_aggregated %}
+      <table><thead><tr><th>Finding</th><th>Confidence</th><th>Severity</th><th>Side</th><th>Codes</th></tr></thead><tbody>
+        {% for k,f in r.image_findings_aggregated.items() %}<tr><td>{{ f.display }}<br><span class="muted">{{ f.description }}</span></td><td>{{ f.confidence|pct }}</td><td>{{ f.severity }}</td><td>{{ f.laterality }}</td><td class="meta">SNOMED {{ f.snomed }}<br>ICD-10 {{ f.icd10 }}</td></tr>{% endfor %}
+      </tbody></table>
+      {% else %}<p class="muted">No clinically relevant anomaly detected.</p>{% endif %}
+      <p class="meta" style="margin-top:.6rem">Per image:
+        {% for im in r.images %}{{ im.filename }} — {{ im.modality }}/{{ im.body_part }}, {{ im.backend }}, quality {{ im.quality.score }}{% if im.quality.flags %} ({{ im.quality.flags|join(', ') }}){% endif %}{{ '; ' if not loop.last }}{% endfor %}</p>
+    </section>
+
+    <section class="card">
+      <h2>What the report says</h2>
+      <div class="report">{{ r.report.highlighted_html|safe }}</div>
+      <p class="legend"><mark class="ent find">finding</mark> <mark class="ent neg">negated finding</mark> <mark class="ent proc">procedure</mark>
+        · source: {{ r.report.source }}{% if r.report.ocr_confidence is not none %} · OCR confidence {{ r.report.ocr_confidence|pct }}{% endif %}
+        {% if r.report.conservative_days %} · conservative management found: {{ r.report.conservative_days }} days{% endif %}</p>
+    </section>
+  </div>
+</div>
+<p class="disclaimer">{{ rec.disclaimer }} · rules {{ r.meta.rules_version }} · {{ r.meta.runtime_sec }}s · <a href="{{ url_for('claim_json', claim_id=r.claim.claim_id) }}">JSON</a> · <a href="#" onclick="window.print();return false">Print</a></p>
+
+<script>
+const IMAGES = {{ r.images|tojson }};
+const URLS = {{ (url_for('outputs', filename='') )|tojson }};
+let view='explain', idx=0;
+const img=document.getElementById('stage-img'), cap=document.getElementById('cap');
+function render(){
+  const im=IMAGES[idx];
+  img.src=URLS+im.artifacts[view];
+  const f=im.findings.map(x=>`${x.label} ${Math.round(x.confidence*100)}%`).join(' · ')||'no anomaly detected';
+  cap.textContent=`${im.filename} — ${f}`;
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+document.querySelectorAll('[data-idx]').forEach(b=>b.onclick=()=>{idx=+b.dataset.idx;document.querySelectorAll('[data-idx]').forEach(x=>x.setAttribute('aria-pressed',x===b));render()});
+render();
+</script>
+{% endblock %}

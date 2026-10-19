@@ -1,0 +1,103 @@
+# ---------------------------------------------------------------------------
+# ILLUSTRATIVE Standard Treatment Guideline rules for demonstration.
+# Package codes and thresholds are PLACEHOLDERS - replace with the official
+# NHA / AB PM-JAY STG + HBP package master before any real-world use.
+# ---------------------------------------------------------------------------
+version: "demo-0.1"
+
+packages:
+  OR-FRACT-ORIF:
+    name: "Open reduction & internal fixation - long bone fracture"
+    specialty: Orthopaedics
+    body_regions: [long_bone, hand]
+    required_findings: [fracture]
+    required_procedures: [orif]
+    image_support: required
+    min_severity: moderate
+    allowed_modalities: [xray, ct]
+    laterality_must_match: true
+    conservative_days_min: 0
+    los_days: {min: 2, max: 10}
+    notes: "Surgical fixation expected for displaced / comminuted / unstable fractures; hairline or undisplaced fractures are normally managed conservatively."
+
+  OR-FRACT-CAST:
+    name: "Closed reduction & cast / splint - fracture"
+    specialty: Orthopaedics
+    body_regions: [long_bone, hand]
+    required_findings: [fracture]
+    required_procedures: [cast]
+    image_support: required
+    min_severity: unknown
+    allowed_modalities: [xray]
+    laterality_must_match: true
+    conservative_days_min: 0
+    los_days: {min: 0, max: 3}
+
+  OR-KNEE-TKR:
+    name: "Total knee replacement"
+    specialty: Orthopaedics
+    body_regions: [knee]
+    required_findings: [osteoarthritis]
+    required_procedures: [tkr]
+    image_support: preferred
+    min_severity: moderate
+    allowed_modalities: [xray, mri]
+    laterality_must_match: true
+    conservative_days_min: 90
+    los_days: {min: 3, max: 10}
+    notes: "Major arthroplasty requires documented failed conservative management before approval."
+
+  PU-PNEUMONIA-MED:
+    name: "Pneumonia - medical management"
+    specialty: Pulmonology
+    body_regions: [chest]
+    required_findings: [infiltrate]
+    required_procedures: [medical_pneumonia]
+    requires_procedure_date: false      # medical management - no operative date
+    image_support: required
+    min_severity: unknown
+    allowed_modalities: [xray, ct]
+    laterality_must_match: false
+    conservative_days_min: 0
+    los_days: {min: 2, max: 14}
+
+  PU-EFFUSION-DRAIN:
+    name: "Pleural effusion - intercostal drainage"
+    specialty: Pulmonology
+    body_regions: [chest]
+    required_findings: [effusion]
+    required_procedures: [icd_drain]
+    image_support: required
+    min_severity: moderate
+    allowed_modalities: [xray, ct, ultrasound]
+    laterality_must_match: true
+    conservative_days_min: 0
+    los_days: {min: 2, max: 10}
+    notes: "Small effusions are typically observed / treated medically; drainage needs a moderate+ collection."
+
+  ON-TUMOUR-EXC:
+    name: "Tumour excision / resection"
+    specialty: Surgical Oncology
+    body_regions: [chest, abdomen, other]
+    required_findings: [mass]
+    required_procedures: [tumour_excision]
+    recommended_report_terms: [biopsy]
+    image_support: required
+    min_severity: unknown
+    allowed_modalities: [ct, mri, ultrasound, xray]
+    laterality_must_match: false
+    conservative_days_min: 0
+    los_days: {min: 3, max: 14}
+
+  GS-CHOLECYSTECTOMY:
+    name: "Laparoscopic cholecystectomy"
+    specialty: General Surgery
+    body_regions: [abdomen]
+    required_findings: [calculus]
+    required_procedures: [cholecystectomy]
+    image_support: preferred
+    min_severity: unknown
+    allowed_modalities: [ultrasound, ct]
+    laterality_must_match: false
+    conservative_days_min: 0
+    los_days: {min: 1, max: 5}

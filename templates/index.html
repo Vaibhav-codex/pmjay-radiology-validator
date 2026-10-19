@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block body %}
+{% if error %}<div class="err" role="alert">{{ error }}</div>{% endif %}
+<div class="intake">
+<form method="post" action="{{ url_for('analyze') }}" enctype="multipart/form-data" id="claimform">
+  <h1>Submit a claim for review</h1>
+  <p class="muted" style="margin-bottom:1rem">Upload the radiology images and the hospital report. ClaimLens compares what the images show with what the report says and checks the billed package against the treatment guidelines. It assists the adjudicator; it does not decide.</p>
+
+  <fieldset>
+    <legend>Radiology images</legend>
+    <label class="drop" id="drop-img">
+      <input type="file" name="images" id="images" multiple accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff,.dcm,.webp" required>
+      <strong>Drop X-ray / CT / MRI / ultrasound files here</strong><br><span class="muted">or click to choose · JPG, PNG, DICOM · several images allowed</span>
+      <div class="names" id="names-img"></div>
+    </label>
+    <div class="grid" style="margin-top:.8rem">
+      <label>Modality
+        <select name="modality"><option value="auto">Auto / X-ray</option><option value="xray">X-ray</option><option value="ct">CT</option><option value="mri">MRI</option><option value="ultrasound">Ultrasound</option></select></label>
+      <label>Body part
+        <select name="body_part"><option value="auto">Auto-detect</option><option value="chest">Chest</option><option value="long_bone">Long bone (femur, tibia, humerus…)</option><option value="knee">Knee</option><option value="hand">Hand / wrist</option><option value="abdomen">Abdomen</option><option value="other">Other</option></select></label>
+      <label>Side marker on film (if visible)
+        <select name="image_marker_laterality"><option value="unknown">Not visible</option><option value="left">Left (L)</option><option value="right">Right (R)</option></select></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Hospital report</legend>
+    <label class="drop" id="drop-rep">
+      <input type="file" name="report_file" id="report_file" accept=".txt,.pdf,.jpg,.jpeg,.png,.tif,.tiff">
+      <strong>Upload report</strong> <span class="muted">· TXT, PDF, or a scan / photo (OCR is applied)</span>
+      <div class="names" id="names-rep"></div>
+    </label>
+    <label style="margin-top:.8rem">…or paste the report text
+      <textarea name="report_text" placeholder="e.g. X-ray left femur: comminuted fracture of the shaft. ORIF with intramedullary nailing performed on the left side."></textarea></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Claim &amp; package</legend>
+    <div class="grid">
+      <label>Claim ID (optional)<input name="claim_id" placeholder="auto-generated"></label>
+      <label>Billed package
+        <select name="package_code" required>
+          {% for code, p in packages.items() %}<option value="{{ code }}">{{ p.name }} ({{ code }})</option>{% endfor %}
+        </select></label>
+      <label>Stage of care
+        <select name="stage_of_care"><option value="claim_settlement">Claim settlement</option><option value="during_treatment">During treatment</option><option value="pre_authorization">Pre-authorisation</option></select></label>
+      <label>Side billed
+        <select name="billed_laterality"><option value="unknown">Not applicable / unknown</option><option value="left">Left</option><option value="right">Right</option><option value="bilateral">Bilateral</option></select></label>
+      <label>Imaging date<input type="date" name="imaging_date"></label>
+      <label>Admission date<input type="date" name="admission_date"></label>
+      <label>Procedure date<input type="date" name="procedure_date"></label>
+      <label>Discharge date<input type="date" name="discharge_date"></label>
+      <label>Conservative management (days)<input type="number" min="0" name="conservative_days" placeholder="from claim form"></label>
+      <label>Patient age<input type="number" min="0" max="120" name="patient_age"></label>
+    </div>
+  </fieldset>
+  <button type="submit" id="go">Analyse claim</button>
+  <span class="muted" id="busy" hidden style="margin-left:.8rem">Analysing images and report…</span>
+</form>
+
+<aside>
+  <div class="card demos">
+    <h2>Try a bundled scenario</h2>
+    <p class="muted" style="font-size:.85rem">Synthetic phantoms — no patient data. Each shows a different kind of mismatch.</p>
+    {% for key, s in scenarios.items() %}
+      <a href="{{ url_for('demo', name=key) }}"><b>{{ s.title }}</b><small>{{ s.package_code }}</small></a>
+    {% endfor %}
+  </div>
+  <div class="card meta">Findings from the built-in image heuristics are demonstration-grade. Install the optional deep-learning backends (see README) for clinically meaningful detection.</div>
+</aside>
+</div>
+<script>
+function wire(dropId,inputId,namesId){
+  const d=document.getElementById(dropId),i=document.getElementById(inputId),n=document.getElementById(namesId);
+  const show=()=>n.textContent=[...i.files].map(f=>f.name).join(', ');
+  i.addEventListener('change',show);
+  ['dragenter','dragover'].forEach(e=>d.addEventListener(e,ev=>{ev.preventDefault();d.classList.add('over')}));
+  ['dragleave','drop'].forEach(e=>d.addEventListener(e,ev=>{ev.preventDefault();d.classList.remove('over')}));
+  d.addEventListener('drop',ev=>{i.files=ev.dataTransfer.files;show()});
+}
+wire('drop-img','images','names-img'); wire('drop-rep','report_file','names-rep');
+document.getElementById('claimform').addEventListener('submit',()=>{
+  document.getElementById('go').disabled=true; document.getElementById('busy').hidden=false;
+});
+</script>
+{% endblock %}
